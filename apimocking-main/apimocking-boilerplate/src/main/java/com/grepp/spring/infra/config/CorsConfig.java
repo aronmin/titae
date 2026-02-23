@@ -25,7 +25,8 @@ public class CorsConfig {
             "https://titae.cedartodo.uk",
             "https://*.cedartodo.uk",
             "http://localhost:8083",
-            "https://localhost:8083"
+            "https://localhost:8083",
+            "https://titae-fe.vercel.app"
         ));
         
         // 허용할 HTTP 메서드 설정
