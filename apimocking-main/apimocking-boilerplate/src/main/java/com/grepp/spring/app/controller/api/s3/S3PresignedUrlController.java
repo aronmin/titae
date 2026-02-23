@@ -1,6 +1,7 @@
 package com.grepp.spring.app.controller.api.s3;
 
 import com.grepp.spring.infra.s3.S3PresignedUrlService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/s3")
+@Profile("prod")
 public class S3PresignedUrlController {
     private final S3PresignedUrlService s3PresignedUrlService;
 

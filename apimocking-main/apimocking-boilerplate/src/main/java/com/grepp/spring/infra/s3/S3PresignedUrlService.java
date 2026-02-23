@@ -1,6 +1,7 @@
 package com.grepp.spring.infra.s3;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Profile("prod")
 public class S3PresignedUrlService {
     @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;

@@ -19,7 +19,6 @@ public class SwaggerConfig {
                         .title("API 문서")
                         .description("API 명세입니다.")
                         .version("v1.0.0"))
-                .addServersItem(new Server().url("https://titae.cedartodo.uk"))
                 .addServersItem(new Server().url("http://localhost:8083"))
                 .components(
                         new Components()

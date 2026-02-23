@@ -9,10 +9,12 @@ import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.response.ResponseCode;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@Profile("mock")
 public class GoogleStorageManager extends AbstractFileManager{
 
     @Value("${google.cloud.storage.bucket}")
