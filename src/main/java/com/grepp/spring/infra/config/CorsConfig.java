@@ -20,13 +20,10 @@ public class CorsConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:3000",
             "http://localhost:3001", 
-            "https://web-4-5-code9ine-fe-nine.vercel.app",
-            "https://*.vercel.app",
-            "https://titae.cedartodo.uk",
-            "https://*.cedartodo.uk",
             "http://localhost:8083",
             "https://localhost:8083",
-            "https://titae-fe.vercel.app"
+            "https://titae-fe.vercel.app",
+            "https://titae.cloud"
         ));
         
         // 허용할 HTTP 메서드 설정
