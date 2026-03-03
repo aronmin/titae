@@ -21,7 +21,7 @@ public class CustomOAuth2FailureHandler extends SimpleUrlAuthenticationFailureHa
         log.error("OAuth2 로그인 실패: {}", exception.getMessage());
         
         // 프론트엔드로 에러와 함께 리다이렉트 (URL 인코딩 적용)
-        String targetUrl = UriComponentsBuilder.fromUriString("https://titae.cedartodo.uk/login")
+        String targetUrl = UriComponentsBuilder.fromUriString("https://titae.cloud/login")
                 .queryParam("error", "oauth_failed")
                 .queryParam("message", exception.getMessage())
                 .build()
