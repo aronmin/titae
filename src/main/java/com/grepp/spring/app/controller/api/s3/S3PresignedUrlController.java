@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/s3")
-@Profile({"prod", "!mock"})
+@Profile("prod")
 public class S3PresignedUrlController {
     private final S3PresignedUrlService s3PresignedUrlService;
 

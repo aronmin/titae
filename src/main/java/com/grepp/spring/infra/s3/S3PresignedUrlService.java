@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Profile({"prod", "!mock"})
+@Profile("prod")
 public class S3PresignedUrlService {
     @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
