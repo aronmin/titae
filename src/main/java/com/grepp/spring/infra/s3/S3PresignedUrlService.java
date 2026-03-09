@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Profile("prod")
+@Profile({"prod", "!mock"})
 public class S3PresignedUrlService {
     @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
@@ -54,7 +54,6 @@ public class S3PresignedUrlService {
                 .bucket(bucket)
                 .key(fileName)
                 .contentType(contentType)
-                .contentLength(MAX_FILE_SIZE) // 최대 파일 크기 제한
                 .build();
 
         PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(builder ->
