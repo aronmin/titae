@@ -57,15 +57,19 @@
 - 카테고리별 지출 분석 및 월간 리포트
 - Naver Cloud OCR을 활용한 영수증 자동 인식
 
-<img src="readme/titae-account.png" width="49%"/>
-<img src="readme/titae-calendar.png" width="49%"/>
+<table><tr>
+<td width="50%"><img src="readme/titae-account.png" width="100%"/></td>
+<td width="50%"><img src="readme/titae-calendar.png" width="100%"/></td>
+</tr></table>
 
 ### 📍 장소 검색
 - 절약 맛집, 축제, 도서관 등 공공데이터 기반 장소 정보 제공
 - 장소 북마크 기능
 
-<img src="readme/titae-place1.png" width="49%"/>
-<img src="readme/titae-place2.png" width="49%"/>
+<table><tr>
+<td width="50%"><img src="readme/titae-place1.png" width="100%"/></td>
+<td width="50%"><img src="readme/titae-place2.png" width="100%"/></td>
+</tr></table>
 
 ### 💬 커뮤니티
 - 카테고리별 게시글 작성·조회·수정·삭제 (MY_STORE, CHALLENGE, FREE)
@@ -73,8 +77,10 @@
 - AWS S3 Presigned URL 기반 이미지 업로드 (최대 8장)
 - 게시글 좋아요·댓글 이벤트 기반 알림 발송
 
-<img src="readme/titae-community1.png" width="49%"/>
-<img src="readme/titae-community2.png" width="49%"/>
+<table><tr>
+<td width="50%"><img src="readme/titae-community1.png" width="100%"/></td>
+<td width="50%"><img src="readme/titae-community2.png" width="100%"/></td>
+</tr></table>
 
 ### 🏆 챌린지
 - 제로 마스터, 노노카페, 냉털 요리왕 등 다양한 절약 챌린지 참여
