@@ -43,7 +43,7 @@ public class AuthService {
     private final ChallengeService challengeService;
     
     public TokenDto signin(LoginRequest loginRequest) {
-        log.info("AuthService.signin 호출됨: username={}", loginRequest.getUsername());
+        // log.info("AuthService.signin 호출됨: username={}", loginRequest.getUsername());
         
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
@@ -57,7 +57,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String email = loginRequest.getUsername();
-            log.info("인증 성공: username={}", email);
+            // log.info("인증 성공: username={}", email);
 
             // 활성화 여부 체크
             Member member = memberRepository.findByEmailIgnoreCase(email)

@@ -38,7 +38,7 @@ public class EmailVerificationService {
         // 이메일 발송
         emailService.sendVerificationEmail(email, verificationCode);
         
-        log.info("인증 코드 발송 완료: {}", email);
+        // log.info("인증 코드 발송 완료: {}", email);
     }
     
     // 인증 코드 검증
@@ -67,7 +67,7 @@ public class EmailVerificationService {
         verification.markAsVerified();
         emailVerificationRepository.save(verification);
         
-        log.info("이메일 인증 완료: {}", email);
+        // log.info("이메일 인증 완료: {}", email);
         return true;
     }
     
@@ -82,7 +82,7 @@ public class EmailVerificationService {
     @Transactional
     public void cleanupExpiredVerifications() {
         emailVerificationRepository.deleteExpiredVerifications();
-        log.info("만료된 인증 코드 정리 완료");
+        // log.info("만료된 인증 코드 정리 완료");
     }
     
     // 개발 환경용: 이메일 인증을 자동으로 완료시키는 메서드
@@ -96,6 +96,6 @@ public class EmailVerificationService {
         emailVerification.markAsVerified(); // 바로 인증 완료로 설정
         emailVerificationRepository.save(emailVerification);
         
-        log.info("개발 환경: 이메일 자동 인증 완료: {}", email);
+        // log.info("개발 환경: 이메일 자동 인증 완료: {}", email);
     }
 } 

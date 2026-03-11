@@ -31,7 +31,7 @@ public class KakaoAddressClient {
     // 카카오 api 요청 url
     @PostConstruct
     public void initWebClient() {
-        log.info("kakao api key 확인! : {}", kakaoApiKey);
+        // log.info("kakao api key 확인! : {}", kakaoApiKey);
         this.webClient = WebClient.builder()
                 .baseUrl("https://dapi.kakao.com")
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoApiKey)
@@ -41,7 +41,7 @@ public class KakaoAddressClient {
     // 주소를 담아 요청 보내기
     public Optional<CoordDto> getCoordinates(String address) {
         if (address == null || address.isBlank()) {
-            log.info("주소가 비어있습니다.");
+            // log.info("주소가 비어있습니다.");
             return Optional.empty();
         }
 
@@ -56,14 +56,14 @@ public class KakaoAddressClient {
                 .bodyToMono(KakaoAddressResponse.class)
                 .mapNotNull(response -> {
                     if (response.getDocuments() == null || response.getDocuments().isEmpty()) {
-                        log.info("좌표 변환 실패: '{}'", cleaned);
+                        // log.info("좌표 변환 실패: '{}'", cleaned);
                         return null;
                     }
                     KakaoAddressResponse.Document doc = response.getDocuments().get(0);
                     return new CoordDto(Double.parseDouble(doc.getY()), Double.parseDouble(doc.getX()));
                 })
                 .onErrorResume(e -> {
-                    log.info("카카오 API 호출 실패 (주소: {}): {}", cleaned, e.getMessage());
+                    // log.info("카카오 API 호출 실패 (주소: {}): {}", cleaned, e.getMessage());
                     return Mono.empty();
                 })
                 .blockOptional();

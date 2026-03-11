@@ -101,11 +101,11 @@ public class JwtTokenProvider {
             Jwts.parser().verifyWith(getSecretKey()).build().parse(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.", e);
+            // log.info("잘못된 JWT 서명입니다.", e);
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.", e);
+            // log.info("지원되지 않는 JWT 토큰입니다.", e);
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.", e);
+            // log.info("JWT 토큰이 잘못되었습니다.", e);
         }
         return false;
     }

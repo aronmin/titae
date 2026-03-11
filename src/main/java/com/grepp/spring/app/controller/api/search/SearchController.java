@@ -35,7 +35,7 @@ public class SearchController {
             @RequestParam (required = false) List<String> type,
             @RequestParam (required = false) List<String> category
     ) {
-        log.info("검색 요청 들어옴: location={}, type={}, category={}", location, type, category);
+        // log.info("검색 요청 들어옴: location={}, type={}, category={}", location, type, category);
         if (location == null || location.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error(ResponseCode.BAD_REQUEST));
         }

@@ -38,10 +38,10 @@ public class ReceiptOcrService {
     public ReceiptDataDto extractReceiptData(MultipartFile file, Long memberId) {
 
         String key = generateKey(memberId);
-        log.info("[extractReceiptData] Redis key: {}", key);
+        // log.info("[extractReceiptData] Redis key: {}", key);
 
         Long count = customStringRedisTemplate.opsForValue().increment(key);
-        log.info("[extractReceiptData] Redis count: {}", count);
+        // log.info("[extractReceiptData] Redis count: {}", count);
 
         // 최초 요청 시 TTL 설정
         if (count == 1) {

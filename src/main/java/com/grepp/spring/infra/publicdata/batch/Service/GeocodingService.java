@@ -39,7 +39,7 @@ public class GeocodingService {
         do {
             Pageable pageable = PageRequest.of(page, BATCH_SIZE);
             storePage = storeRepository.findAll(pageable);
-            log.info("=== {}번째 페이지 처리 시작 (총 {}건) ===", page + 1, storePage.getNumberOfElements());
+            // log.info("=== {}번째 페이지 처리 시작 (총 {}건) ===", page + 1, storePage.getNumberOfElements());
 
             for (Store store : storePage) {
                 if (store.getLatitude() != null && store.getLongitude() != null) {
@@ -48,7 +48,7 @@ public class GeocodingService {
 
                 String address = store.getAddress();
                 if (address == null || address.isBlank()) {
-                    log.info("주소 없음 - store: {}", store.getName());
+                    // log.info("주소 없음 - store: {}", store.getName());
                     continue;
                 }
 
@@ -60,7 +60,7 @@ public class GeocodingService {
                         fail++;
                     }
                 } catch (Exception e) {
-                    log.info("예외 발생 - 가게이름: {}, 주소: {}", store.getName(), store.getAddress(), e);
+                    // log.info("예외 발생 - 가게이름: {}, 주소: {}", store.getName(), store.getAddress(), e);
                     fail++;
                 }
 
@@ -71,7 +71,7 @@ public class GeocodingService {
 
         } while (storePage.hasNext());
 
-        log.info("좌표 변환 완료 - 전체: {}, 성공: {}, 실패: {}", success + fail, success, fail);
+        // log.info("좌표 변환 완료 - 전체: {}, 성공: {}, 실패: {}", success + fail, success, fail);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -84,10 +84,10 @@ public class GeocodingService {
             store.setLongitude(coord.getLongitude());
             storeRepository.save(store);
 
-            log.info("[{}] 주소: {}, 위도: {}, 경도: {}", store.getName(), store.getAddress(), coord.getLatitude(), coord.getLongitude());
+            // log.info("[{}] 주소: {}, 위도: {}, 경도: {}", store.getName(), store.getAddress(), coord.getLatitude(), coord.getLongitude());
             return true;
         } else {
-            log.info("[{}] 주소 좌표 변환 실패 - {}", store.getName(), store.getAddress());
+            // log.info("[{}] 주소 좌표 변환 실패 - {}", store.getName(), store.getAddress());
             return false;
         }
     }

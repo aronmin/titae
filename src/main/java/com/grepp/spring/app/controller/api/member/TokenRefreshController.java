@@ -25,8 +25,8 @@ public class TokenRefreshController {
             @RequestBody TokenSetRequest request,
             HttpServletResponse response) {
         
-        log.info("OAuth2 토큰 설정 요청: expiresIn={}, refreshExpiresIn={}", 
-                request.getExpiresIn(), request.getRefreshExpiresIn());
+        // log.info("OAuth2 토큰 설정 요청: expiresIn={}, refreshExpiresIn={}", 
+                // request.getExpiresIn(), request.getRefreshExpiresIn());
         
         try {
             // Access Token HttpOnly 쿠키 설정
@@ -47,8 +47,8 @@ public class TokenRefreshController {
             response.addHeader("Set-Cookie", accessTokenCookie.toString());
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
             
-            log.info("OAuth2 토큰이 HttpOnly 쿠키에 설정되었습니다. AccessToken 길이: {}", 
-                    request.getAccessToken().length());
+            // log.info("OAuth2 토큰이 HttpOnly 쿠키에 설정되었습니다. AccessToken 길이: {}", 
+                    // request.getAccessToken().length());
             
             return ResponseEntity.ok(ApiResponse.success("토큰이 성공적으로 설정되었습니다."));
             

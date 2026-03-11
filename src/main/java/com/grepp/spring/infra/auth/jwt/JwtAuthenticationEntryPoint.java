@@ -31,7 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException authException) throws IOException {
         
-        log.info("request uri : {}", request.getRequestURI());
+        // log.info("request uri : {}", request.getRequestURI());
         
         ResponseCode responseCode = switch (authException) {
             case BadCredentialsException bce -> {

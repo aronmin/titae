@@ -19,8 +19,8 @@ public class FeignCommonConfig {
     @Bean
     public RequestInterceptor requestInterceptor(){
         return requestTemplate -> {
-            log.info("=========================================================");
-            log.info("requestTemplate : {}", requestTemplate);
+            // log.info("=========================================================");
+            // log.info("requestTemplate : {}", requestTemplate);
         };
     }
 

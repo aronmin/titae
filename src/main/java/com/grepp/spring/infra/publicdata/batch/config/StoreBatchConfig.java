@@ -117,15 +117,15 @@ public class StoreBatchConfig {
     @Bean
     public ItemWriter<Store> storeItemWriter() {
         return (ItemWriter<Store>) items -> {
-            log.info("Writer 실행: {}개 저장 시도", items.size());
+            // log.info("Writer 실행: {}개 저장 시도", items.size());
 
             if (!items.isEmpty()) {
                 Store first = items.getItems().get(0);
-                log.info("첫 번째 저장 대상: {}", first.getName());
+                // log.info("첫 번째 저장 대상: {}", first.getName());
             }
 
             storeRepository.saveAll(items);
-            log.info("Writer 완료: {}개 저장됨", items.size());
+            // log.info("Writer 완료: {}개 저장됨", items.size());
         };
     }
 

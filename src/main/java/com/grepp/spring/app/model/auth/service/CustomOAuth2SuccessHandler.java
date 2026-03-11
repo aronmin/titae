@@ -45,14 +45,14 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         
-        log.info("OAuth2 로그인 성공: {}", email);
+        // log.info("OAuth2 로그인 성공: {}", email);
         
         // 회원 정보 조회
         Optional<Member> memberOpt = memberRepository.findByEmailIgnoreCase(email);
         
         if (memberOpt.isEmpty()) {
             // 신규 회원인 경우 - 추가 정보 입력 페이지로 리다이렉트
-            log.info("OAuth2 신규 회원: {} - 추가 정보 입력 페이지로 리다이렉트", email);
+            // log.info("OAuth2 신규 회원: {} - 추가 정보 입력 페이지로 리다이렉트", email);
             
             // OAuth2User attribute를 안전하게 가져오기
             String name = getAttributeSafely(oAuth2User, "name");
@@ -72,7 +72,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         
         // 기존 회원인 경우 - JWT 토큰 발급 후 /login/googleauth로 리다이렉트
         Member member = memberOpt.get();
-        log.info("OAuth2 기존 회원 로그인: {}", email);
+        // log.info("OAuth2 기존 회원 로그인: {}", email);
         
         // JWT 토큰 생성
         TokenDto tokenDto = generateTokenDto(member);

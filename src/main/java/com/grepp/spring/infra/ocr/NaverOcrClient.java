@@ -71,7 +71,7 @@ public class NaverOcrClient {
                     .bodyToMono(String.class)
                     .block();
 
-            log.info("[requestOcr] OCR 응답 원본: {}", rawResponse);
+            // log.info("[requestOcr] OCR 응답 원본: {}", rawResponse);
 
             // 5. JSON 파싱
             return parseOcrResponse(rawResponse);

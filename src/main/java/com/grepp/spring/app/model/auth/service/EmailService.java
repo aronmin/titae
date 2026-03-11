@@ -29,7 +29,7 @@ public class EmailService {
             ));
             
             mailSender.send(message);
-            log.info("인증 이메일 발송 완료: {}", to);
+            // log.info("인증 이메일 발송 완료: {}", to);
         } catch (Exception e) {
             log.error("인증 이메일 발송 실패: {}", to, e);
             throw new RuntimeException("이메일 발송에 실패했습니다.", e);
@@ -52,7 +52,7 @@ public class EmailService {
             ));
             
             mailSender.send(message);
-            log.info("비밀번호 재설정 이메일 발송 완료: {}", to);
+            // log.info("비밀번호 재설정 이메일 발송 완료: {}", to);
         } catch (Exception e) {
             log.error("비밀번호 재설정 이메일 발송 실패: {}", to, e);
             throw new RuntimeException("이메일 발송에 실패했습니다.", e);
@@ -75,7 +75,7 @@ public class EmailService {
             ));
             
             mailSender.send(message);
-            log.info("임시 비밀번호 이메일 발송 완료: {}", to);
+            // log.info("임시 비밀번호 이메일 발송 완료: {}", to);
         } catch (Exception e) {
             log.error("임시 비밀번호 이메일 발송 실패: {}", to, e);
             throw new RuntimeException("이메일 발송에 실패했습니다.", e);

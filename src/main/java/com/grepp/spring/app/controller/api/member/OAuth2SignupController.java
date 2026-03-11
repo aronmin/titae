@@ -45,8 +45,8 @@ public class OAuth2SignupController {
             @RequestBody @Valid OAuth2SignupRequest request,
             HttpServletResponse response) {
         
-        log.info("OAuth2 회원가입 요청: email={}, name={}, nickname={}, phoneNumber={}, profileImage={}", 
-                request.getEmail(), request.getName(), request.getNickname(), request.getPhoneNumber(), request.getProfileImage());
+        // log.info("OAuth2 회원가입 요청: email={}, name={}, nickname={}, phoneNumber={}, profileImage={}", 
+                // request.getEmail(), request.getName(), request.getNickname(), request.getPhoneNumber(), request.getProfileImage());
         
         // 요청 데이터 검증
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
@@ -81,7 +81,7 @@ public class OAuth2SignupController {
         
         if (existingMember.isPresent() && !existingMember.get().getActivated()) {
             // 탈퇴한 계정이 있으면 재활용
-            log.info("탈퇴한 계정 재활용: {}", request.getEmail());
+            // log.info("탈퇴한 계정 재활용: {}", request.getEmail());
             Member member = existingMember.get();
             member.setName(request.getName());
             member.setNickname(request.getNickname());
@@ -99,10 +99,10 @@ public class OAuth2SignupController {
             // OAuth2 사용자 임시 비밀번호 설정
             String tempPassword = "OAUTH2_USER_" + System.currentTimeMillis() + "_" + request.getEmail();
             member.setPassword(tempPassword);
-            log.info("OAuth2 사용자 임시 비밀번호 설정: {}", tempPassword);
+            // log.info("OAuth2 사용자 임시 비밀번호 설정: {}", tempPassword);
             
             savedMember = memberRepository.save(member);
-            log.info("탈퇴 계정 재활용 성공: {}", savedMember.getEmail());
+            // log.info("탈퇴 계정 재활용 성공: {}", savedMember.getEmail());
         } else {
             // 새로운 회원 생성
             Member member = new Member();
@@ -117,28 +117,28 @@ public class OAuth2SignupController {
             // OAuth2 사용자 임시 비밀번호 설정
             String tempPassword = "OAUTH2_USER_" + System.currentTimeMillis() + "_" + request.getEmail();
             member.setPassword(tempPassword);
-            log.info("OAuth2 사용자 임시 비밀번호 설정: {}", tempPassword);
+            // log.info("OAuth2 사용자 임시 비밀번호 설정: {}", tempPassword);
             
             // Member 객체 상태 확인
-            log.info("Member 객체 생성 완료: email={}, password={}, name={}, nickname={}", 
-                    member.getEmail(), member.getPassword(), member.getName(), member.getNickname());
+            // log.info("Member 객체 생성 완료: email={}, password={}, name={}, nickname={}", 
+                    // member.getEmail(), member.getPassword(), member.getName(), member.getNickname());
             
             // 데이터베이스 저장 시도
             try {
                 savedMember = memberRepository.save(member);
-                log.info("새 회원 저장 성공: {}", savedMember.getEmail());
+                // log.info("새 회원 저장 성공: {}", savedMember.getEmail());
             } catch (Exception e) {
                 log.error("회원 저장 실패: {}", e.getMessage(), e);
                 throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR);
             }
         }
-        log.info("OAuth2 회원가입 완료: {}", savedMember.getEmail());
+        // log.info("OAuth2 회원가입 완료: {}", savedMember.getEmail());
         
         // JWT 토큰 생성
         TokenDto tokenDto = generateTokenDto(savedMember);
-        log.info("JWT 토큰 생성 완료: accessToken={}, refreshToken={}", 
-                tokenDto.getAccessToken().substring(0, 20) + "...", 
-                tokenDto.getRefreshToken().substring(0, 20) + "...");
+        // log.info("JWT 토큰 생성 완료: accessToken={}, refreshToken={}", 
+                // tokenDto.getAccessToken().substring(0, 20) + "...", 
+                // tokenDto.getRefreshToken().substring(0, 20) + "...");
         
         // 쿠키 설정 - CORS 및 보안 설정 추가
         String accessTokenCookie = TokenCookieFactory.create(AuthToken.ACCESS_TOKEN.name(), tokenDto.getAccessToken(), tokenDto.getExpiresIn()).toString();
@@ -150,7 +150,7 @@ public class OAuth2SignupController {
         
         response.addHeader("Set-Cookie", accessTokenCookie);
         response.addHeader("Set-Cookie", refreshTokenCookie);
-        log.info("쿠키 설정 완료: SameSite=None, Secure=true");
+        // log.info("쿠키 설정 완료: SameSite=None, Secure=true");
         
         OAuth2SignupResponse signupResponse = new OAuth2SignupResponse(
                 2000, 

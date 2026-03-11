@@ -91,12 +91,12 @@ public class CommunityController {
         @AuthenticationPrincipal Principal principal
     ) {
         Long memberId = principal.getMemberId();
-        log.info("게시물 생성 - member ID : {}", memberId);
+        // log.info("게시물 생성 - member ID : {}", memberId);
 
         Member member = memberService.getMemberById(memberId);
 
         communityService.createPost(request, member);
-        log.info("게시물 생성 - request : {}", request);
+        // log.info("게시물 생성 - request : {}", request);
 
         Map<String, String> responseBody = Map.of("message", "게시글이 생성되었습니다.");
 
