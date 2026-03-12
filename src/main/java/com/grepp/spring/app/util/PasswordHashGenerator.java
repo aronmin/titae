@@ -8,7 +8,7 @@ public class PasswordHashGenerator {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String raw = "test";
         String hash = encoder.encode(raw);
-        System.out.println("원본: " + raw);
-        System.out.println("bcrypt 해시: " + hash);
+        // System.out.println("원본: " + raw);
+        // System.out.println("bcrypt 해시: " + hash);
     }
 } 

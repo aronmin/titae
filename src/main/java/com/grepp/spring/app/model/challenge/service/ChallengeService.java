@@ -394,7 +394,7 @@ public class ChallengeService {
             List<ChallengeCount> counts = challengeCountRepository.findDailyChallenges(
                 member.getMemberId(), startOfYesterday, startOfToday, "일일");
 
-            System.out.println("알림시작");
+            // System.out.println("알림시작");
             for (ChallengeCount cc : counts) {
                 if (cc.getCount() == cc.getChallenge().getTotal()) {
 
@@ -402,9 +402,9 @@ public class ChallengeService {
                     createNotification(member, cc);
                     member.setTotalExp(member.getTotalExp() + 20);
                     memberRepository.save(member);
-                    System.out.println("✅ 챌린지 " + cc.getChallenge().getName() + " 성공");
+                    // System.out.println("✅ 챌린지 " + cc.getChallenge().getName() + " 성공");
                 } else {
-                    System.out.println("❌ 챌린지 " + cc.getChallenge().getName() + " 실패");
+                    // System.out.println("❌ 챌린지 " + cc.getChallenge().getName() + " 실패");
                 }
             }
         }
@@ -435,7 +435,7 @@ public class ChallengeService {
             boolean notification_receipt = notificationRepository.existsMonthlyNotification(member.getMemberId(), LocalDate.now().atStartOfDay(),
                 LocalDate.now().plusDays(1).atStartOfDay(),"찐 기록러 칭호를 획득했어요!");
 
-            System.out.println("알림시작");
+            // System.out.println("알림시작");
             for (ChallengeCount cc : counts) {
                 if (cc.getCount() == cc.getChallenge().getTotal()) {
 
@@ -480,9 +480,9 @@ public class ChallengeService {
                         member.setTotalExp(member.getTotalExp() + 100);
                         memberRepository.save(member);
                     }
-                    System.out.println("✅ 챌린지 " + cc.getChallenge().getName() + " 성공");
+                    // System.out.println("✅ 챌린지 " + cc.getChallenge().getName() + " 성공");
                 } else {
-                    System.out.println("❌ 챌린지 " + cc.getChallenge().getName() + " 실패");
+                    // System.out.println("❌ 챌린지 " + cc.getChallenge().getName() + " 실패");
                 }
             }
         }

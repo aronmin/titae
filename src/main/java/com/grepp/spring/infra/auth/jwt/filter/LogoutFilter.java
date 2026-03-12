@@ -55,7 +55,7 @@ public class LogoutFilter extends OncePerRequestFilter {
             response.addHeader("Set-Cookie", expiredRefreshToken);
             response.addHeader("Set-Cookie", expiredSessionId);
             
-            System.out.println("[LogoutFilter] 쿠키 만료 설정 완료: " + path);
+            // System.out.println("[LogoutFilter] 쿠키 만료 설정 완료: " + path);
             response.sendRedirect("/");
         }
         

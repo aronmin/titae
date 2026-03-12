@@ -51,52 +51,52 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        System.out.println("[JwtAuthFilter] 요청 URI: " + uri);
+        // System.out.println("[JwtAuthFilter] 요청 URI: " + uri);
         // 추가: Authorization 헤더, 쿠키 값 모두 출력
         String headerToken = request.getHeader("Authorization");
-        System.out.println("[JwtAuthFilter] Authorization 헤더: " + headerToken);
+        // System.out.println("[JwtAuthFilter] Authorization 헤더: " + headerToken);
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
-                System.out.println("[JwtAuthFilter] 쿠키: " + c.getName() + "=" + c.getValue());
+                // System.out.println("[JwtAuthFilter] 쿠키: " + c.getName() + "=" + c.getValue());
             }
         } else {
-            System.out.println("[JwtAuthFilter] 쿠키 없음");
+            // System.out.println("[JwtAuthFilter] 쿠키 없음");
         }
         String accessToken = jwtTokenProvider.resolveToken(request, AuthToken.ACCESS_TOKEN);
         if (accessToken == null) {
-            System.out.println("[JwtAuthFilter] accessToken 없음 - 필터 통과");
+            // System.out.println("[JwtAuthFilter] accessToken 없음 - 필터 통과");
             filterChain.doFilter(request, response);
             return;
         }
-        System.out.println("[JwtAuthFilter] accessToken 추출: " + accessToken.substring(0, Math.min(20, accessToken.length())) + "...");
-        System.out.println("[JwtAuthFilter] accessToken 전체 길이: " + accessToken.length());
+        // System.out.println("[JwtAuthFilter] accessToken 추출: " + accessToken.substring(0, Math.min(20, accessToken.length())) + "...");
+        // System.out.println("[JwtAuthFilter] accessToken 전체 길이: " + accessToken.length());
         try {
             if (jwtTokenProvider.validateToken(accessToken, request)) {
-                System.out.println("[JwtAuthFilter] accessToken 유효함");
+                // System.out.println("[JwtAuthFilter] accessToken 유효함");
                 Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                 if (userBlackListRepository.existsById(authentication.getName())) {
-                    System.out.println("[JwtAuthFilter] 블랙리스트 사용자. 필터 통과");
+                    // System.out.println("[JwtAuthFilter] 블랙리스트 사용자. 필터 통과");
                     filterChain.doFilter(request, response);
                     return;
                 }
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println("[JwtAuthFilter] SecurityContext에 인증 정보 세팅 완료: " + authentication.getName());
+                // System.out.println("[JwtAuthFilter] SecurityContext에 인증 정보 세팅 완료: " + authentication.getName());
             } else {
-                System.out.println("[JwtAuthFilter] accessToken 유효하지 않음");
+                // System.out.println("[JwtAuthFilter] accessToken 유효하지 않음");
             }
         } catch (ExpiredJwtException e) {
-            System.out.println("[JwtAuthFilter] accessToken 만료. 리프레시 처리 시도");
+            // System.out.println("[JwtAuthFilter] accessToken 만료. 리프레시 처리 시도");
             boolean refreshSuccess = manageTokenRefresh(accessToken, request, response);
             if (!refreshSuccess) {
-                System.out.println("[JwtAuthFilter] 토큰 갱신 실패");
+                // System.out.println("[JwtAuthFilter] 토큰 갱신 실패");
                 // 토큰 갱신 실패 시 401 응답
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"code\":\"401\",\"message\":\"토큰이 만료되었습니다. 다시 로그인해주세요.\"}");
                 return;
             }
         } catch (Exception e) {
-            System.out.println("[JwtAuthFilter] 예외 발생: " + e.getMessage());
+            // System.out.println("[JwtAuthFilter] 예외 발생: " + e.getMessage());
         }
         filterChain.doFilter(request, response);
     }
@@ -128,7 +128,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             addToken(response, claims, rt);
             return true;
         } catch (Exception e) {
-            System.out.println("[JwtAuthFilter] 토큰 갱신 중 오류: " + e.getMessage());
+            // System.out.println("[JwtAuthFilter] 토큰 갱신 중 오류: " + e.getMessage());
             return false;
         }
     }

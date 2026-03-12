@@ -185,7 +185,7 @@ public class MemberController {
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<MemberLoginResponse>> login(@RequestBody @Valid MemberLoginRequest request, HttpServletResponse response) {
-        System.out.println("로그인 시도: email=" + request.getEmail() + ", password=" + request.getPassword());
+//        System.out.println("로그인 시도: email=" + request.getEmail() + ", password=" + request.getPassword());
         com.grepp.spring.app.controller.api.mock.auth.payload.LoginRequest authRequest = new com.grepp.spring.app.controller.api.mock.auth.payload.LoginRequest();
         authRequest.setUsername(request.getEmail());
         authRequest.setPassword(request.getPassword());
@@ -609,10 +609,10 @@ public class MemberController {
     @Operation(summary = "칭호 장착", description = "획득한 칭호 중 atId로 지정한 칭호를 장착합니다.")
     public ResponseEntity<ApiResponse<MemberEquipTitleResponse>> equipTitle(@RequestBody @Valid MemberEquipTitleRequest request, HttpServletRequest httpRequest) {
         // 디버깅: 요청 데이터 로그
-        System.out.println("[EquipTitle] 요청 받은 aTId: " + request.getATId());
-        System.out.println("[EquipTitle] 요청 객체 전체: " + request);
-        System.out.println("[EquipTitle] Content-Type: " + httpRequest.getContentType());
-        System.out.println("[EquipTitle] 요청 메서드: " + httpRequest.getMethod());
+//        System.out.println("[EquipTitle] 요청 받은 aTId: " + request.getATId());
+//        System.out.println("[EquipTitle] 요청 객체 전체: " + request);
+//        System.out.println("[EquipTitle] Content-Type: " + httpRequest.getContentType());
+//        System.out.println("[EquipTitle] 요청 메서드: " + httpRequest.getMethod());
         
         // aTId 유효성 검증
         if (!request.isValidATId()) {
