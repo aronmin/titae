@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -71,6 +72,7 @@ public class CommunityPost extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private Set<CommunityBookmark> bookmarks = new HashSet<>();
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "post")
     private Set<PostImage> images = new HashSet<>();
 

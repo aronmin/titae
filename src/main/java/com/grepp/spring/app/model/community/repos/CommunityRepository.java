@@ -3,7 +3,7 @@ package com.grepp.spring.app.model.community.repos;
 import com.grepp.spring.app.model.challenge.code.CommunityCategory;
 import com.grepp.spring.app.model.community.domain.CommunityPost;
 import com.grepp.spring.app.model.member.domain.Member;
-import feign.Param;
+import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +16,23 @@ import org.springframework.data.jpa.repository.Query;
 public interface CommunityRepository extends JpaRepository<CommunityPost, Long> {
 
     // 커뮤니티 게시글 카테고리별 조회
-    Page<CommunityPost> findByCategoryAndActivatedIsTrueAndMember_ActivatedTrue(CommunityCategory category, Pageable pageable);
+    @Query(
+        value = """
+                    SELECT p FROM CommunityPost p 
+                    JOIN FETCH p.member m 
+                    LEFT JOIN FETCH m.equippedTitle 
+                    WHERE p.category = :category 
+                    AND p.activated = true 
+                    AND m.activated = true
+        """,
+        countQuery = """
+                SELECT count(p) FROM CommunityPost p 
+                JOIN p.member m 
+                WHERE p.category = :category 
+                AND p.activated = true 
+                AND m.activated = true
+        """)
+    Page<CommunityPost> findByCategoryAndActivatedIsTrueAndMember_ActivatedTrue(@Param("category") CommunityCategory category, Pageable pageable);
 
     // 커뮤니티 게시글 존재 여부 판별
     Optional<CommunityPost> findByPostIdAndActivatedIsTrueAndMember_ActivatedTrue(Long postId);

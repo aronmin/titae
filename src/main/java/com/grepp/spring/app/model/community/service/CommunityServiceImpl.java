@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -103,14 +104,17 @@ public class CommunityServiceImpl implements CommunityService {
         Pageable pageable = pageParam.toPageable(Sort.by(Sort.Direction.DESC,"createdAt"));
         Page<CommunityPost> posts =  communityRepository.findByCategoryAndActivatedIsTrueAndMember_ActivatedTrue(categoryEnum, pageable);
 
+        List<Long> postIds = posts.stream().map(CommunityPost::getPostId).toList();
+        Set<Long> likedPostIds = postIds.isEmpty() ? Set.of() : likeRepository.findLikedPostIdsByMemberId(memberId, postIds);
+        Set<Long> bookmarkedPostIds = postIds.isEmpty() ? Set.of() : bookmarkRepository.findBookmarkedPostIdsByMemberId(memberId, postIds);
+
         return posts.stream()
             .map(post -> {
                 Long postId = post.getPostId();
-                int commentCount = commentRepository.countByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(postId);
-                int likeCount = likeRepository.countByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(postId);
-                boolean isLiked = likeRepository.existsByPost_PostIdAndMember_MemberIdAndActivatedTrueAndMember_ActivatedTrue(postId, memberId);
-                boolean isBookmarked = bookmarkRepository.existsByPost_PostIdAndMember_MemberIdAndActivatedTrueAndMember_ActivatedTrue(postId, memberId);
-                // TODO : 챌린지 달성 여부는 챌린지 repository 구현된 이후 추가
+                int commentCount = post.getCommentCount();
+                int likeCount = post.getLikeCount();
+                boolean isLiked = likedPostIds.contains(postId);
+                boolean isBookmarked = bookmarkedPostIds.contains(postId);
 
                 return new CommunityPostDetailResponse(
                     post.getPostId(),
@@ -195,11 +199,10 @@ public class CommunityServiceImpl implements CommunityService {
         // 존재하는 게시물인지 검증
         CommunityPost post = getActivatedPost(postId);
 
-        int commentCount = commentRepository.countByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(postId);
-        int likeCount = likeRepository.countByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(postId);
+        int commentCount = post.getCommentCount();
+        int likeCount = post.getLikeCount();
         boolean isLiked = likeRepository.existsByPost_PostIdAndMember_MemberIdAndActivatedTrueAndMember_ActivatedTrue(postId, memberId);
         boolean isBookmarked = bookmarkRepository.existsByPost_PostIdAndMember_MemberIdAndActivatedTrueAndMember_ActivatedTrue(postId, memberId);
-        // TODO : 챌린지 달성 여부는 챌린지 repository 구현된 이후 추가
 
         return new CommunityPostDetailResponse(
             post.getPostId(),

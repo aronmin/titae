@@ -1,12 +1,12 @@
 package com.grepp.spring.app.model.community.repos;
 
 import com.grepp.spring.app.model.community.domain.CommunityComment;
-import feign.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface CommunityCommentRepository extends JpaRepository<CommunityComment, Long> {
 
@@ -14,7 +14,15 @@ public interface CommunityCommentRepository extends JpaRepository<CommunityComme
     int countByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(Long postId);
 
     // 커뮤니티 게시글 댓글 조회
-    List<CommunityComment> findByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(Long postId);
+    @Query("""
+        SELECT c FROM CommunityComment c 
+        JOIN FETCH c.member m 
+        LEFT JOIN FETCH m.equippedTitle 
+        WHERE c.post.postId = :postId 
+        AND c.activated = true 
+        AND m.activated = true
+    """)
+    List<CommunityComment> findByPost_PostIdAndActivatedTrueAndMember_ActivatedTrue(@Param("postId") Long postId);
 
     // 커뮤니티 게시글 댓글 삭제
     Optional<CommunityComment> findByCommentIdAndActivatedTrueAndMember_ActivatedTrue(Long commentId);
