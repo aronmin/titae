@@ -6,6 +6,7 @@ import com.grepp.spring.app.model.member.repos.MemberRepository;
 import com.grepp.spring.app.model.member.domain.Member;
 import com.grepp.spring.app.model.member.dto.*;
 import com.grepp.spring.app.model.place_bookmark.service.PlaceBookmarkService;
+import com.grepp.spring.app.model.community.dto.CommunityPostDetailResponse;
 import com.grepp.spring.app.model.community.service.CommunityService;
 import com.grepp.spring.app.model.budget.service.BudgetService;
 import com.grepp.spring.app.model.achieved_title.service.AchievedTitleService;
@@ -320,24 +321,23 @@ public class MemberController {
 
     @GetMapping("/mypage/posts")
     @Operation(summary = "내가 작성한 게시글 조회", description = "현재 로그인한 사용자가 작성한 게시글 목록을 조회합니다.")
-    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getMyPosts(
+    public ResponseEntity<ApiResponse<List<CommunityPostDetailResponse>>> getMyPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         // JWT에서 현재 사용자 ID 추출
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentEmail = auth != null ? auth.getName() : null;
-        
+
         if (currentEmail == null || currentEmail.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponse<>(ResponseCode.UNAUTHORIZED.code(), "인증 정보가 유효하지 않습니다.", null));
         }
-        
+
         // 이메일로 멤버 조회
         Member member = memberRepository.findByEmailIgnoreCase(currentEmail)
                 .orElseThrow(() -> new RuntimeException("멤버를 찾을 수 없습니다."));
-        
-        // 내가 작성한 게시글 조회
-        List<Map<String, Object>> myPosts = communityService.getMyPosts(member.getMemberId());
+
+        List<CommunityPostDetailResponse> myPosts = communityService.getMyPosts(member.getMemberId(), member.getMemberId());
         return ResponseEntity.ok(ApiResponse.success(myPosts));
     }
 
@@ -364,23 +364,21 @@ public class MemberController {
     
     @GetMapping("/bookmarks/posts")
     @Operation(summary = "게시글 북마크 조회", description = "현재 로그인한 사용자의 게시글 북마크 목록을 조회합니다.")
-    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getBookmarkedPosts() {
+    public ResponseEntity<ApiResponse<List<CommunityPostDetailResponse>>> getBookmarkedPosts() {
         // JWT에서 현재 사용자 ID 추출
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentEmail = auth != null ? auth.getName() : null;
-        
+
         if (currentEmail == null || currentEmail.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponse<>(ResponseCode.UNAUTHORIZED.code(), "인증 정보가 유효하지 않습니다.", null));
         }
-        
+
         // 이메일로 멤버 조회
         Member member = memberRepository.findByEmailIgnoreCase(currentEmail)
                 .orElseThrow(() -> new RuntimeException("멤버를 찾을 수 없습니다."));
-        
-        // 게시글 북마크 조회
-        List<Map<String, Object>> bookmarkedPosts = communityService.getBookmarkedPosts(member.getMemberId());
-        
+
+        List<CommunityPostDetailResponse> bookmarkedPosts = communityService.getBookmarkedPosts(member.getMemberId(), member.getMemberId());
         return ResponseEntity.ok(ApiResponse.success(bookmarkedPosts));
     }
 
@@ -433,8 +431,8 @@ public class MemberController {
         int expProgress = (int) ((double) currentExp / nextLevelExp * 100);
         
         // 실제 데이터 조회
-        List<Map<String, Object>> myPosts = communityService.getMyPosts(member.getMemberId());
-        List<Map<String, Object>> bookmarkedPosts = communityService.getBookmarkedPosts(member.getMemberId());
+        List<CommunityPostDetailResponse> myPosts = communityService.getMyPosts(member.getMemberId(), member.getMemberId());
+        List<CommunityPostDetailResponse> bookmarkedPosts = communityService.getBookmarkedPosts(member.getMemberId(), member.getMemberId());
         List<Map<String, Object>> bookmarkedPlaces = placeBookmarkService.getMemberPlaceBookmarks(member.getMemberId());
         
         // 목표 정보 (실제 데이터 사용)
@@ -458,19 +456,8 @@ public class MemberController {
             }
         }
         
-        // 칭호 정보 (실제 서비스 데이터로 대체)
-        List<AchievedTitleDTO> allTitles = achievedTitleRepository.findDtoByMemberId(member.getMemberId());
-        List<Map<String, Object>> achievedTitles = new java.util.ArrayList<>();
-        for (var t : allTitles) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("aTId", t.getATId()); // aTId 추가
-            map.put("challengeId", t.getChallengeId());
-            map.put("name", t.getName());
-            map.put("minCount", t.getMinCount());
-            map.put("icon",t.getIcon());
-            map.put("achieved", t.getAchieved()); // achieved 추가
-            achievedTitles.add(map);
-        }
+        // 칭호 정보
+        List<AchievedTitleDTO> achievedTitles = achievedTitleRepository.findDtoByMemberId(member.getMemberId());
         //Map<String, Object> equippedTitle = achievedTitles.isEmpty() ? null : achievedTitles.get(0);
         Optional<Member> withEquippedTitleAndChallenge = memberRepository.findWithEquippedTitleAndChallenge(member.getMemberId());
 
@@ -900,13 +887,9 @@ public class MemberController {
         int expProgress = (int) ((double) currentExp / nextLevelExp * 100);
         
         // 다른 유저의 게시글과 북마크 정보 조회
-        List<Map<String, Object>> myPosts = communityService.getMyPosts(member.getMemberId());
-        List<Map<String, Object>> bookmarkedPosts = communityService.getBookmarkedPosts(member.getMemberId());
+        List<CommunityPostDetailResponse> myPostsWithBookmarkStatus = communityService.getMyPosts(member.getMemberId(), currentUser.getMemberId());
+        List<CommunityPostDetailResponse> bookmarkedPostsWithBookmarkStatus = communityService.getBookmarkedPosts(member.getMemberId(), currentUser.getMemberId());
         List<Map<String, Object>> bookmarkedPlaces = placeBookmarkService.getMemberPlaceBookmarks(member.getMemberId());
-        
-        // 현재 로그인한 사용자의 북마크 상태를 각 게시글에 추가
-        List<Map<String, Object>> myPostsWithBookmarkStatus = addBookmarkAndLikeStatusToPosts(myPosts, currentUser.getMemberId());
-        List<Map<String, Object>> bookmarkedPostsWithBookmarkStatus = addBookmarkAndLikeStatusToPosts(bookmarkedPosts, currentUser.getMemberId());
         List<Map<String, Object>> bookmarkedPlacesWithBookmarkStatus = addBookmarkStatusToPlaces(bookmarkedPlaces, currentUser.getMemberId());
         
         String goalStuff = member.getGoalStuff();
@@ -922,18 +905,7 @@ public class MemberController {
                 remainPrice = BigDecimal.ZERO;
             }
         }
-        List<AchievedTitleDTO> allTitles = achievedTitleRepository.findDtoByMemberId(memberId);
-        List<Map<String, Object>> achievedTitles = new java.util.ArrayList<>();
-            for (var t : allTitles) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("aTId", t.getATId()); // aTId 추가
-                    map.put("challengeId", t.getChallengeId());
-                    map.put("name", t.getName());
-                    map.put("minCount", t.getMinCount());
-                    map.put("icon",t.getIcon());
-                    map.put("achieved", t.getAchieved()); // achieved 추가
-                    achievedTitles.add(map);
-            }
+        List<AchievedTitleDTO> achievedTitles = achievedTitleRepository.findDtoByMemberId(memberId);
 
 
        // Map<String, Object> equippedTitle = achievedTitles.isEmpty() ? null : achievedTitles.get(0);
@@ -975,24 +947,6 @@ public class MemberController {
         );
         MemberMypageResponse response = new MemberMypageResponse(data);
         return ResponseEntity.ok(ApiResponse.success(response));
-    }
-    
-    // 게시글에 현재 사용자의 북마크 상태 추가
-    private List<Map<String, Object>> addBookmarkAndLikeStatusToPosts(List<Map<String, Object>> posts, Long currentUserId) {
-        return posts.stream().map(post -> {
-            Map<String, Object> postWithBookmarkStatus = new HashMap<>(post);
-            Long postId = Long.valueOf(post.get("postId").toString()); // postid → postId로 수정
-            
-            // 현재 사용자가 해당 게시글을 북마크했는지 확인
-            boolean isBookmarkedByCurrentUser = communityService.isPostBookmarkedByUser(postId, currentUserId);
-            postWithBookmarkStatus.put("isBookmarked", isBookmarkedByCurrentUser);
-            
-            // 현재 사용자가 해당 게시글을 좋아요했는지 확인
-            boolean isLikedByCurrentUser = communityService.isPostLikedByUser(postId, currentUserId);
-            postWithBookmarkStatus.put("isLiked", isLikedByCurrentUser);
-            
-            return postWithBookmarkStatus;
-        }).toList();
     }
     
     // 장소에 현재 사용자의 북마크 상태 추가

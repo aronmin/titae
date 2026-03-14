@@ -10,7 +10,6 @@ import com.grepp.spring.app.model.community.dto.CommunityUserInfoResponse;
 import com.grepp.spring.app.model.member.domain.Member;
 import com.grepp.spring.infra.payload.PageParam;
 import java.util.List;
-import java.util.Map;
 
 public interface CommunityService {
 
@@ -51,10 +50,10 @@ public interface CommunityService {
     List<CommunityTopPostResponse> getTopPosts();
 
     // 내가 작성한 게시글 목록 조회 (마이페이지용)
-    List<Map<String, Object>> getMyPosts(Long memberId);
+    List<CommunityPostDetailResponse> getMyPosts(Long memberId, Long viewerId);
 
     // 내가 북마크한 게시글 목록 조회 (마이페이지용)
-    List<Map<String, Object>> getBookmarkedPosts(Long memberId);
+    List<CommunityPostDetailResponse> getBookmarkedPosts(Long memberId, Long viewerId);
     
     // 특정 사용자가 특정 게시글을 북마크했는지 확인
     boolean isPostBookmarkedByUser(Long postId, Long memberId);

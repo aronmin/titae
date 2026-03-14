@@ -27,9 +27,7 @@ import com.grepp.spring.app.model.post_image.service.PostImageService;
 import com.grepp.spring.infra.payload.PageParam;
 import com.grepp.spring.util.NotFoundException;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -432,92 +430,76 @@ public class CommunityServiceImpl implements CommunityService {
     // 내가 작성한 게시글 목록 조회 (마이페이지용)
     @Override
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getMyPosts(Long memberId) {
+    public List<CommunityPostDetailResponse> getMyPosts(Long memberId, Long viewerId) {
         List<CommunityPost> posts = communityRepository.findByMember_MemberIdAndActivatedIsTrueAndMember_ActivatedTrueOrderByCreatedAtDesc(memberId);
-        
+
+        List<Long> postIds = posts.stream().map(CommunityPost::getPostId).toList();
+        Set<Long> likedPostIds = postIds.isEmpty() ? Set.of() : likeRepository.findLikedPostIdsByMemberId(viewerId, postIds);
+        Set<Long> bookmarkedPostIds = postIds.isEmpty() ? Set.of() : bookmarkRepository.findBookmarkedPostIdsByMemberId(viewerId, postIds);
+
         return posts.stream()
-            .map(post -> {
-                Map<String, Object> postMap = new HashMap<>();
-                postMap.put("postId", post.getPostId());
-                postMap.put("memberId", post.getMember().getMemberId());
-                postMap.put("category", post.getCategory().toString());
-                postMap.put("challengeCategory", post.getChallenge() != null ? post.getChallenge().toString() : null);
-                postMap.put("title", post.getTitle());
-                postMap.put("createdAt", post.getCreatedAt().toString());
-                postMap.put("content", post.getContent());
-                
-                // 이미지 URL 목록
-                List<String> imageUrls = post.getImages().stream()
-                    .filter(image -> image.getActivated())
-                    .map(image -> image.getImageUrl())
-                    .toList();
-                postMap.put("imageUrls", imageUrls);
-                
-                postMap.put("commentCount", post.getCommentCount());
-                postMap.put("likeCount", post.getLikeCount());
-                
-                // 좋아요/북마크 상태는 별도로 처리하므로 여기서는 기본값 설정
-                postMap.put("isLiked", false);
-                postMap.put("isBookmarked", false);
-                
-                // 챌린지 달성 여부
-                postMap.put("challengeAchieved", post.getChallenge() != null);
-                
-                // 작성자 정보
-                Member writer = post.getMember();
-                postMap.put("writerNickname", writer.getNickname());
-                postMap.put("writerTitle", writer.getEquippedTitle() != null ? writer.getEquippedTitle().getName() : null);
-                postMap.put("writerLevel", writer.getLevel() != null ? writer.getLevel() : 1);
-                postMap.put("writerProfileImage", writer.getProfileImage());
-                
-                return postMap;
-            })
+            .map(post -> new CommunityPostDetailResponse(
+                post.getPostId(),
+                post.getMember().getMemberId(),
+                post.getCategory().name(),
+                post.getChallenge() != null ? post.getChallenge().name() : null,
+                post.getTitle(),
+                post.getCreatedAt().toString(),
+                post.getContent(),
+                post.getImages().stream()
+                    .filter(PostImage::getActivated)
+                    .sorted(Comparator.comparing(PostImage::getSortOrder))
+                    .map(PostImage::getImageUrl)
+                    .toList(),
+                post.getCommentCount(),
+                post.getLikeCount(),
+                likedPostIds.contains(post.getPostId()),
+                bookmarkedPostIds.contains(post.getPostId()),
+                false,
+                post.getMember().getNickname(),
+                post.getMember().getEquippedTitle() != null ? post.getMember().getEquippedTitle().getName() : null,
+                post.getMember().getLevel() != null ? post.getMember().getLevel() : 1,
+                post.getMember().getProfileImage()
+            ))
             .toList();
     }
 
     // 내가 북마크한 게시글 목록 조회 (마이페이지용)
     @Override
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getBookmarkedPosts(Long memberId) {
+    public List<CommunityPostDetailResponse> getBookmarkedPosts(Long memberId, Long viewerId) {
         List<CommunityBookmark> bookmarks = bookmarkRepository.findByMember_MemberIdAndActivatedTrueAndMember_ActivatedTrueOrderByCreatedAtDesc(memberId);
-        
+
+        List<Long> postIds = bookmarks.stream().map(b -> b.getPost().getPostId()).toList();
+        Set<Long> likedPostIds = postIds.isEmpty() ? Set.of() : likeRepository.findLikedPostIdsByMemberId(viewerId, postIds);
+        Set<Long> bookmarkedPostIds = postIds.isEmpty() ? Set.of() : bookmarkRepository.findBookmarkedPostIdsByMemberId(viewerId, postIds);
+
         return bookmarks.stream()
             .map(bookmark -> {
                 CommunityPost post = bookmark.getPost();
-                Map<String, Object> postMap = new HashMap<>();
-                postMap.put("postId", post.getPostId());
-                postMap.put("memberId", post.getMember().getMemberId());
-                postMap.put("category", post.getCategory().toString());
-                postMap.put("challengeCategory", post.getChallenge() != null ? post.getChallenge().toString() : null);
-                postMap.put("title", post.getTitle());
-                postMap.put("createdAt", post.getCreatedAt().toString());
-                postMap.put("content", post.getContent());
-                
-                // 이미지 URL 목록
-                List<String> imageUrls = post.getImages().stream()
-                    .filter(image -> image.getActivated())
-                    .map(image -> image.getImageUrl())
-                    .toList();
-                postMap.put("imageUrls", imageUrls);
-                
-                postMap.put("commentCount", post.getCommentCount());
-                postMap.put("likeCount", post.getLikeCount());
-                
-                // 좋아요/북마크 상태는 별도로 처리하므로 여기서는 기본값 설정
-                postMap.put("isLiked", false);
-                postMap.put("isBookmarked", true); // 북마크한 게시글이므로 true
-                
-                // 챌린지 달성 여부
-                postMap.put("challengeAchieved", post.getChallenge() != null);
-                
-                // 작성자 정보
-                Member writer = post.getMember();
-                postMap.put("writerNickname", writer.getNickname());
-                postMap.put("writerTitle", writer.getEquippedTitle() != null ? writer.getEquippedTitle().getName() : null);
-                postMap.put("writerLevel", writer.getLevel() != null ? writer.getLevel() : 1);
-                postMap.put("writerProfileImage", writer.getProfileImage());
-                
-                return postMap;
+                return new CommunityPostDetailResponse(
+                    post.getPostId(),
+                    post.getMember().getMemberId(),
+                    post.getCategory().name(),
+                    post.getChallenge() != null ? post.getChallenge().name() : null,
+                    post.getTitle(),
+                    post.getCreatedAt().toString(),
+                    post.getContent(),
+                    post.getImages().stream()
+                        .filter(PostImage::getActivated)
+                        .sorted(Comparator.comparing(PostImage::getSortOrder))
+                        .map(PostImage::getImageUrl)
+                        .toList(),
+                    post.getCommentCount(),
+                    post.getLikeCount(),
+                    likedPostIds.contains(post.getPostId()),
+                    bookmarkedPostIds.contains(post.getPostId()),
+                    false,
+                    post.getMember().getNickname(),
+                    post.getMember().getEquippedTitle() != null ? post.getMember().getEquippedTitle().getName() : null,
+                    post.getMember().getLevel() != null ? post.getMember().getLevel() : 1,
+                    post.getMember().getProfileImage()
+                );
             })
             .toList();
     }
