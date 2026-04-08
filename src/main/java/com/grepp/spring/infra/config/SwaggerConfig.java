@@ -19,7 +19,7 @@ public class SwaggerConfig {
                         .title("API 문서")
                         .description("API 명세입니다.")
                         .version("v1.0.0"))
-                .addServersItem(new Server().url("https://titae.cloud").description("운영 서버"))
+                .addServersItem(new Server().url("https://api.titae.cloud").description("운영 서버"))
                 .addServersItem(new Server().url("http://localhost:8083").description("로컬 서버"))
                 .components(
                         new Components()
