@@ -19,11 +19,12 @@ public class CorsConfig {
         // 허용할 Origin 설정
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:3000",
-            "http://localhost:3001", 
+            "http://localhost:3001",
             "http://localhost:8083",
             "https://localhost:8083",
             "https://titae-fe.vercel.app",
-            "https://titae.cloud"
+            "https://titae.cloud",
+            "https://api.titae.cloud"
         ));
         
         // 허용할 HTTP 메서드 설정
